@@ -1,0 +1,66 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="Système-et-réseau-11022026">Système et réseau 11/02/2026</h1><h2 id="La-famille-exec">La famille exec():</h2><pre><code>Les fonctions execl() et execlp() sont construites sur cette base.
+</code></pre><h2 id="Communication-interprocessus-">Communication interprocessus:-</h2><h2 id="Présentation-des-tubes-">Présentation des tubes:-</h2><p>la plus ancienne forme d’IPC sous unix(~1070s).</p><p>Vous les conaiisez probablement déjà:</p><pre><code>$cat someFile.txt |wc -l  
+</code></pre><ul>
+<li>cat imprime un fichier sur la sortie standard.</li>
+</ul><p>Les tubes créés par un parent permettent la communication entre les processus enfants (à condition que le tube ait été créé avant les appels fork()).</p><h2 id="Faits-Concernant-les-tubes">Faits Concernant les tubes:</h2><ul>
+<li>on ne peut pas accès gràce à lseek .</li>
+<li>Écrire dans un tube pour lequel aucun processus n’a de descripteur de lecture ouvert entraîne un signal SIGPIPE de la part du noyau (par défaut, cela tue le processus).<br>
+Si un processus qui écrit sur un tube ne ferme pas la sortie de lecture du tube, il finira par remplir le tube et se bloquera.<br>
+Par conséquent, il faut fermer la sortie de lecture des tubes lorsqu’ils ne sont pas utilisés.</li>
+</ul><h2 id="Création-de-tubes">Création de tubes</h2><ul>
+<li>L’appel système pipe() crée des tubes.</li>
+</ul><p><strong>En C</strong></p><pre><code>#include &lt;unistd.h&gt;
+int pipe(int pipedes[2]); 
+</code></pre><p><strong>Correction problème 0</strong><br>
+Exercice 0 - Utilisation de tube pour synchroniser les processus.<br>
+Problème 0 : Créez un programme C qui affiche Parent démarré, puis crée NUM_CHILD (constante définie par votre programme) processus enfants dont chacun dort pendant un nombre aléatoire de secondes (disons entre 1 et 3) puis affiche Child X done (où X est le PID correspondant) avant de se terminer. Lorsque tous les enfants sont terminés, le parent doit afficher Parent terminé avant de quitter.</p><pre><code>    #include &lt;stdio.h&gt;
+    #include &lt;fcntl.h&gt;
+    #include &lt;stdlib.h&gt;
+    #include &lt;unistd.h&gt;
+    #include &lt;string.h&gt;
+    #include&lt;time.h&gt;
+
+
+    #define NUM_CHILD 10
+
+    int main(){
+        int pfd[2];
+        srand(time(NULL));
+        pid_t p;
+        if((pipe(pfd))==-1){
+            printf("couldn't find");
+            exit(EXIT_FAILURE);
+        }
+        printf("Parent démarré\n");
+
+    for(int i=0;i&lt;NUM_CHILD;i++){
+    p=fork();
+
+
+       if(p==0){
+            sleep(rand()%3);
+            printf("Child %d done\n",getpid());
+            close(pfd[0]);
+           // char f='a';
+           char f;
+            write(pfd[1],&amp;f,1);
+            exit(EXIT_SUCCESS);
+
+    }
+    }
+        char f;
+        close(pfd[1]);
+        for(int i=0;i&lt;NUM_CHILD;i++){
+            read(pfd[0],&amp;f,1);}
+
+        printf("parent terminé %d\n",getpid());
+
+    
+    
+    exit(EXIT_SUCCESS);
+
+
+
+  
+    }
+</code></pre></div>
