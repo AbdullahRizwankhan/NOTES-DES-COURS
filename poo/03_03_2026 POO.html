@@ -1,0 +1,103 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="03032026-POO">03/03/2026 POO</h1><h3 id="Chapitre-16-Surcharge-de-new-et-delete-et-new-delete">Chapitre 16: Surcharge de new et delete et new[] delete[];</h3><p>**Les opération new et delete sont surchangeable hors classe de à l’interieur d’une classe .<br>
+<strong>Exemple hors classe</strong></p><pre><code>    void *operator new(size_t,int a,int b){
+    
+    *****
+    }
+</code></pre><pre><code>new A(arg1,arg2){expr1,expr2};
+</code></pre><p>//phase1 :appel à operator new(sizeof(A),arg1,arg2);<br>
+//phase2 appel au constructeur de la classe A avec les argument{exp1,exp2,…}(A{exp1,exp2})<br>
+avec this qui prend l’adresse renvoyée par operator new(sizeof(A,arg1,arg2));</p><p><strong>si l’opération new et surchange de la classe A alors c’est cette definition qui l’emporte lors d’un new A(…){…}</strong></p><ul>
+<li>il existe operator new(size_t a) par défaut.</li>
+<li>il existe operaot new(size_t a,void * p); definit dans les entêtes c++ qui renvoie la valeur p (sous reservation).</li>
+</ul><p>Exemple :</p><pre><code>    A *t=malloc(sizeof(A)*100);
+    int i;
+    for(int i=0:i&lt;100;i++){
+        new(t+i)A{....}
+            //appel au constructeur sur l'adresse t+i sans allocation de mémoire 
+    }
+    
+</code></pre><p><strong>hors classe</strong></p><pre><code>Une expression delete exp //exp de type 
+                            //class A 
+                            
+a pour conséquence :
+</code></pre><ol>
+<li>appel au destructeur ~A() sur exp ((*exp).Ã())</li>
+<li>appel de operateur delete (exp).</li>
+</ol><p>Exemple:<br>
+A* t=new A[exp]{{…},{…},{…},}<br>
+//appel au constructeur de A exp fois.</p><pre><code>delete[]t;
+//appel au destructeur de A exp fois.
+</code></pre><p>on peut aussi reserver des tableu d’objet de classe.</p><pre><code>    A T[10]={{0,..},{b, , },....}
+    //appel à A{a,....} sur la case T[0];
+    //A{b,....} sur la case T[1];
+    
+
+
+</code></pre><p>Chapitre 17:méthode et attribut de classe:<br>
+une méthode de classe peut être vue comme “une fonction” qui fait partie de la class. Elle peut être appellée sans objet.</p><pre><code>    class A{
+        int at;
+        public:
+            void methode1(){//methode d'objet 
+                at=1;
+            }
+            static void methode2(){//erreur interdit d'accéder à des attributs d'objets.
+                at=1;
+            }
+            static void methode3(){}//methode de classe
+            void method4e(){}//methode d'objet
+    
+    };
+    int main(){
+    A obj;
+    obj.methode1();
+    obj.methode3();
+    obj.methode4();
+    A::methode1();//erreur c'est une méthode d'objet
+    A::methode3();//ok méthode de classe 
+    A::methode4();//erreur
+    }
+</code></pre><p>Un attribut de classe est comme une variable global membre de la classe .il doit être défini hors de la classe et déclaré dans la classe. les méthode de la classe peuvent y accéder .</p><pre><code>Exemple:-
+    struct A{
+        int a; //attribut d'objet
+        static int b;// attribut de classe (static)
+        void methode1(){
+            b=1,3;
+        }
+        static void methode2(){
+            b=2;//ok b est un attribut de classe donc accessible même dans une méthode de classe.
+        }
+        int A::b=0;//attention aux définitions multiples.
+    }
+    
+    int main(){
+        A obj1;
+        A obj2;
+        obj1.b=1;
+        obj1.a=2;
+        obj2.b=3;
+        obj2.a=4;
+        //ici obj1.b==3;
+        A::b=1;//ok
+        //A::a=0;erreur.
+        
+    }
+</code></pre><p>Vocabulaire</p><p><strong>nombre d’une classe</strong></p><ul>
+<li>
+<p>privé</p>
+</li>
+<li>
+<p>publique</p>
+</li>
+<li>
+<p>attribut</p>
+</li>
+<li>
+<p>méthode</p>
+</li>
+<li>
+<p>de classe</p>
+</li>
+<li>
+<p>d’objet</p>
+</li>
+</ul></div>

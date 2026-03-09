@@ -1,0 +1,18 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="DEV-WEB-16-02-2026">DEV WEB 16 02 2026</h1><p><strong>Commande</strong></p><p><code>netcat -l 2026</code> sur un terminale<br>
+<code>netcat 127.0.0.1 2026</code> sur un deuxiéme terminer après tu peux discuter pour teste</p><h2 id="Exo-73">Exo 73</h2><h4 id="fichier-python">fichier python</h4><pre><code class="import hljs"><span class="hljs-built_in">socket</span> = <span class="hljs-built_in">socket</span>.<span class="hljs-built_in">socket</span>(<span class="hljs-built_in">socket</span>.AF_INET, <span class="hljs-built_in">socket</span>.SOCK_STREAM) <span class="hljs-comment"># (ipv4,mode TCP)</span>
+<span class="hljs-built_in">socket</span>.connect((<span class="hljs-string">"127.0.0.1"</span>, <span class="hljs-number">1076</span>)) <span class="hljs-comment"># (adresse-ip,num-port)</span>
+<span class="hljs-built_in">socket</span>.<span class="hljs-built_in">send</span>(b<span class="hljs-string">"Bonjour\n"</span>) <span class="hljs-comment"># envoie liste octets</span>
+<span class="hljs-built_in">socket</span>.<span class="hljs-built_in">close</span>() 
+</code></pre><h4 id="Commande-sur-terminale">Commande sur terminale</h4><pre><code>netcat -l 1076 
+</code></pre><p>puis vous éxecutez terminale en prèmier puis fichier python et comme ca affiche Bonjour qaund vous éxecutez fichier python.</p><h2 id="Cours-75-Web">Cours 75. Web</h2><h4 id="Commande-sur-terminale1">Commande sur terminale</h4><p><code>host a.michelizza.free.fr</code><br>
+<code>echo -e "GET /pmwiki.php HTTP/1.1\nHost: a.michelizza.free.fr\n\n" | netcat -C 212.27.34.12 80</code></p><p>pour récuperer html d’un site web.</p><h2 id="exo-74">exo 74</h2><pre><code>import socket # bibliotheque socket
+socEcoute = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # (ipv4,mode TCP)
+socEcoute.bind(("0.0.0.0",12348)) # 0.0.0.0 (accepte tout)
+socEcoute.listen() # pres a recevoir
+socLie,adresseLointaine=socEcoute.accept() # produit socket pour la
+# première connexion recu
+c=socLie.recvmsg(10) # lit 10 prochains octets
+print(c)
+
+
+</code></pre></div>

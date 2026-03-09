@@ -1,0 +1,189 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="Système-et-rèseau-18022026">Système et rèseau 18/02/2026</h1><p><strong>Les threads et les processus fournissent un mécanisme de concurrence/parallélisme.</strong><br>
+<strong>point important:-</strong></p><ul>
+<li>­Un processus peut contenir plusieurs threads.**</li>
+</ul><p><strong>L’API PTHREADS:-</strong><br>
+Standardisé à la fin des annéed 90.</p><p><strong>pthread_create():-</strong> créé un nouveau thread.<br>
+<strong>void <em>arg:</em></strong> pour passer des arguments à la fonction.</p><p><strong>pthread_join:-</strong> equiavalent de wait en manière flou.</p><p><strong>phthread_detach():-</strong> c’est pour nétooyer automiquement après la sortie.</p><p><strong>Mutexes</strong><br>
+Un mutex permet d’assurer l’atomicité.<br>
+ils ont deux états :verouiller et dèverouiller .</p><p>pour créer un mutex:<br>
+pthread_mutex_t mtx =PHTREAD_MUTEX_INITIALIZER;</p><p>Exercice 1<br>
+Problème 0 : Compilez le programme incr.c (trouvé dans le repo git du cours) et lancez l’exécutable résultant avec différentes entrées. Qu’observez-vous ? Proposez un moyen de résoudre le(s) problème(s) observé(s).</p><p>Problème 1 : Étudiez le programme linkedLists.c. Que fait-il ? Pouvez-vous deviner les problèmes qu’il pourrait poser avant de le compiler et de le lancer ?</p><p>Problème 2 : Compilez et lancez linkedLists.c. Faites-le plusieurs fois. Qu’observez-vous ? Que proposez-vous pour résoudre les problèmes observés ?</p><h4 id="Correction-Exercice-1-problème-0">Correction Exercice 1 problème 0:</h4><pre><code>#include &lt;stdlib.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+
+static int toInc = 0;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static void* threadF(void* arg){
+
+    int* loops = (int *) arg;
+    int i, temp; 
+
+    for (i = 0; i &lt; *loops; i++){
+        pthread_mutex_lock(&amp;mutex);
+        temp = toInc;
+        temp++;
+        toInc = temp;
+        pthread_mutex_unlock(&amp;mutex);
+    }
+    
+    return NULL;
+
+}
+
+int main(int argc, char *argv[]){
+
+    int n;
+    if (argc &gt; 1){
+        n = atoi(argv[1]);
+    }
+    else{
+        printf("Wrong input\n");
+        exit(EXIT_FAILURE);
+    }
+    pthread_mutex_init(&amp;mutex,NULL);
+
+    pthread_t t1, t2;
+
+    int s = pthread_create(&amp;t1, NULL, threadF, &amp;n);
+    if (s!=0){
+        printf("Error in creating t1: %s", strerror(s));
+        exit(EXIT_FAILURE);
+    }    
+
+    s = pthread_create(&amp;t2, NULL, threadF, &amp;n);
+    if (s!=0){
+        printf("Error in creating t2: %s", strerror(s));
+        exit(EXIT_FAILURE);
+    }
+
+    //wait for the threads to finish
+    s = pthread_join(t1, NULL); 
+    if (s!=0){
+        printf("Error in joining t1: %s", strerror(s));
+        exit(EXIT_FAILURE);
+    }
+    s = pthread_join(t2, NULL); 
+    if (s!=0){
+        printf("Error in joining t2: %s", strerror(s));
+        exit(EXIT_FAILURE);
+    }
+    pthread_mutex_destroy(&amp;mutex);
+
+
+    printf("Final value: %d\n",toInc);
+    exit(EXIT_SUCCESS);
+}   
+
+
+</code></pre><h4 id="Correction-exo1problème2">Correction exo1problème2</h4><pre><code>    
+    #include &lt;stdlib.h&gt;
+    #include &lt;fcntl.h&gt;
+    #include &lt;unistd.h&gt;
+    #include &lt;stdio.h&gt;
+    #include &lt;pthread.h&gt;
+    #include &lt;errno.h&gt;
+    #include &lt;string.h&gt;
+    typedef struct node {
+        struct node * next;
+    } node_t;
+    static int toInc = 0;
+    static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+    static void* threadF(void* arg){
+        node_t* head = (node_t *) arg;
+        pthread_mutex_lock(&amp;mtx);
+
+        if(head!=NULL &amp;&amp; head-&gt;next!=NULL){
+                node_t* next_node = head-&gt;next;
+                head-&gt;next=next_node-&gt;next;
+
+                free(next_node);
+        }
+        //deletes the next-after-the-head node and link the head to the next-to-next
+        //head-next-nnext --&gt; head-nnext
+        pthread_mutex_unlock(&amp;mtx);
+
+
+        return NULL;
+    }
+    int main(int argc, char *argv[]){
+        int n; if (argc &gt; 1){
+            n = atoi(argv[1]);
+        }
+        else{
+            printf("Wrong input\n");
+            exit(EXIT_FAILURE);
+        }
+        node_t* head = malloc(sizeof(node_t));
+        if (head == NULL){
+            perror("error in allocating");
+            exit(EXIT_FAILURE);
+        }
+        else{
+            head-&gt;next = NULL;
+        }
+        node_t* last_head = head;
+        for (int i = 0; i &lt; n - 1; i++){
+            node_t* newNode = malloc(sizeof(node_t));
+            if(newNode == NULL){
+                perror("error in allocating");
+                exit(EXIT_FAILURE);
+            }
+            else{
+                newNode-&gt;next = NULL;
+            }
+            last_head-&gt;next = newNode;
+            last_head = newNode;
+        }
+
+        int len = 0;
+        node_t* current = head;
+        while(current != NULL){
+            len += 1;
+            current = current-&gt;next;
+        }
+        printf("Initial length: %d\n", len);
+        pthread_t t1,t2;
+        int s = pthread_create(&amp;t1, NULL, threadF, head-&gt;next);
+        if (s!=0){
+            printf("Error in creating t1: %s", strerror(s));
+            exit(EXIT_FAILURE);
+        }    
+        s = pthread_create(&amp;t2, NULL, threadF, head);
+        if (s!=0){
+            printf("Error in creating t2: %s", strerror(s));
+            exit(EXIT_FAILURE);
+        }
+        //wait for the threads to finish
+        s = pthread_join(t1, NULL); 
+        if (s!=0){
+            printf("Error in joining t1: %s", strerror(s));
+            exit(EXIT_FAILURE);
+        }
+        s = pthread_join(t2, NULL); 
+        if (s!=0){
+            printf("Error in joining t2: %s", strerror(s));
+            exit(EXIT_FAILURE);
+        }
+        len = 0;
+        current = head;
+        while(current != NULL){
+            len += 1;
+            current = current-&gt;next;
+        }
+        printf("Final length: %d\n", len);
+
+        exit(EXIT_SUCCESS);
+    }   
+
+
+    ```
+
+
+
+
+</code></pre></div>

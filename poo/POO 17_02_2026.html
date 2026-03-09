@@ -1,0 +1,77 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="POO-17022026">POO 17/02/2026</h1><h3 id="MARDI-10-mars-à-10H-40">MARDI 10 mars à 10H 40</h3><h3 id="Chapitre-13-new-delete-nullptr">Chapitre 13 :new ,delete ,nullptr.</h3><p>En c++ pour représenter une adresse numm on peut utiliser nullptr (au lieu de NULL).</p><p>New et delete:<br>
+pour allouer et construire un objet manuellement .</p><p>(Sur le tas):on peut utiliser new aui appelent impliciterent un constructeur de l’objet . pour libérer un objet construit avec new il faut appeler delete.</p><pre><code>Exemple : 
+    class A{
+    int * tab=nullptr;
+    int s=0;
+    public:
+        A(int n):tab{malloc(sizeof(int)*n)},s{n}{}
+        A(const A &amp;origin):tab{malloc(sizeof(int)*s)},s{origin.s}{}
+        const A&amp; operator=(.....){.......}
+        ~A(){free(this-&gt;tab);}
+    };
+    
+    int main(){
+    A tab1{10};
+    A* ptab2=malloc(sizeof(A));
+    A* ptab3=new A{10};
+    //reservation sur le tas 
+    // et appel au constructeur A (int)
+    free(plab2);//libération seule
+    delete ptab3;//1.appel au destructeur sur * ptabs.
+                // 2.libération de la mémoire 
+    //destructeur de tab1.
+    }
+</code></pre><h4 id="Chapitre-14-Compilateur-séparé">Chapitre 14: Compilateur séparé</h4><p>une classe qui contient des définitions de méthods peut être importée dans différents fichiers.cpp du même programmme.<br>
+Cepenfant on peut séparer de définionation d’une ou plusieur<br>
+de ses</p><p>Exemple classe + méthodes:<br>
+class A{<br>
+int attr;<br>
+A(…){…};<br>
+int netNode(…){…}<br>
+~A(…){…}{…};<br>
+void operator@(…){…};</p><pre><code>}
+</code></pre><p>Exemple classe séparé de méthodes.<br>
+Définition de class e dans la fichier .hpp</p><pre><code class="#if hljs"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> #<span class="hljs-meta-keyword">if</span> ndef __Class_A_01311497</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span>{</span>
+    <span class="hljs-keyword">int</span> attr;
+    <span class="hljs-keyword">public</span>:
+        <span class="hljs-built_in">A</span>(....);
+        <span class="hljs-keyword">int</span> mé<span class="hljs-built_in">thode</span>(....);
+        ~ <span class="hljs-built_in">A</span>(....);
+        <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span>@(.....);
+        <span class="hljs-keyword">friend</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">B</span>;</span>
+        
+};
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+</code></pre><pre><code>définition des méthode à placer dans un .cpp:- 
+    A::A:atr{...}{....
+    int A::methode(....){...}
+    A::~A(.....){.....};
+    void A::operator@ (.....){.....}
+</code></pre><p>Chapitre 15:objet const:-<br>
+sur un objet déclarée const on ne peut appeler que des méthode const sauf pour les constructeur.pour modifier un attribut const dans une méthode const il doit être défini mutable.</p><pre><code class="class hljs">     <span class="hljs-keyword">int</span> atr;
+     <span class="hljs-built_in">A</span>(<span class="hljs-keyword">int</span> x):attr{c}{}
+     <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get</span><span class="hljs-params">()</span></span>{<span class="hljs-keyword">return</span> attr;}
+     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a)</span></span>{atr)a};
+     
+}
+</code></pre><pre><code class="class hljs"><span class="hljs-keyword">int</span> a =obj.<span class="hljs-built_in">get</span>();<span class="hljs-comment">//ok</span>
+obj.<span class="hljs-built_in">set</span>(<span class="hljs-number">6</span>*<span class="hljs-number">2</span>);<span class="hljs-comment">//ok</span>
+A <span class="hljs-keyword">const</span> obj.get{<span class="hljs-number">43</span>};
+<span class="hljs-comment">//a=obj.get();ERREUR </span>
+<span class="hljs-comment">//obj.set(6);erreur</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span>{</span>
+    <span class="hljs-keyword">int</span> attr
+    <span class="hljs-keyword">public</span>:
+        <span class="hljs-built_in">A</span>(<span class="hljs-keyword">int</span> c):attr{c}{}
+        <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get</span><span class="hljs-params">( )</span></span>{<span class="hljs-keyword">return</span> attr;}
+        <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">set</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a)</span></span>{attr=a;}
+        <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get2</span><span class="hljs-params">()</span><span class="hljs-keyword">const</span></span>{
+            <span class="hljs-keyword">this</span> -&gt;n++;ok n est <span class="hljs-keyword">mutable</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>-&gt;attr;
+        }
+}
+
+
+</code></pre></div>

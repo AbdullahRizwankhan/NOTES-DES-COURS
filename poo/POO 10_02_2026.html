@@ -1,0 +1,78 @@
+<div id="doc" class="markdown-body container-fluid"><h1 id="POO-10022026">POO 10/02/2026</h1><h2 id="Chapitre-8Destruction-et-Reférences-const-">Chapitre 8:Destruction et Reférences const :</h2><p><em><strong>Destruction:</strong></em><br>
+on peut écrire une méthode qui sera automatique implicitent appellée lors de la fin de la vie de l’objet. Cette méthode est appelées destruction sur identifiant est celui de la classe précédé par ~ . il ne doit pas avoir des paramètre .</p><pre><code>Exemple:
+    class A{
+    int v;
+    public:
+    A(int p):v{p}{cout &lt;&lt;"je suis construit"&lt;&lt; endl}.
+    ~A(){cout &lt;&lt;"je suis détruit"&lt;&lt; v&lt;&lt;endl;}
+    
+    };
+void f(){
+    A p{43};
+    
+}
+
+int main(){
+int p{1};//je suis contruit 1 
+{
+A g{2}}// je suis construit 2
+//je suis détruit 
+f();// je suis construit 4// je suis détruit 4.
+A e{7};je suis construit 7 .//je suis détruit 7 et à la je suis détruit 1
+}
+</code></pre><p><em><strong>Reférences const:</strong></em><br>
+on peut initialiser une référence sur "type const " avec une expresseur qui ne possède à priorie pas d"adresse</p><pre><code>Exemple:
+    int a;
+    int &amp;r1;
+    const int &amp;r2 =a;
+    const int &amp;r3=3;//ok
+    const int b=3;
+    //int &amp; r=b;//erreur;
+    const int &amp; r5=b;//ok
+</code></pre><h2 id="Chapitre-9-Surchaage-d’opérateur-en-interne">Chapitre 9: Surchaage d’opérateur en interne</h2><p>on ne peut pas surcharger les opérareur</p><pre><code>a=b a[b] a(b,c,d) a-&gt;b 
+</code></pre><p>à l’exterieur d’une classe</p><p>mais on peut à l’intérieur d’une classe par des méthode d’objet</p><p>a=b —&gt; a.operator=(b)<br>
+a[b]—&gt; a.operator<a href="" target="_blank" rel="noopener"></a><br>
+a(b,c,d) —&gt; a.operatotr()[b,c,d];<br>
+a—&gt; b —&gt;a.operator(b)</p><p>si @ est un operateur</p><p>a@b —&gt; a.operator @(b)<br>
+@a —&gt; a.operaot @()<br>
+a@ —&gt; a.operator@ (<s>0</s>)</p><pre><code>Exemple:
+    class A{
+        int t[10];
+        public :
+            int &amp; operator[](int i){
+            if(i&lt;0||i&gt;9){
+            fprintf(stdeer,"Erreur d'indice");
+            exit(1);
+        
+            }
+            return this -&gt; t[i];
+            }
+    }
+    A obj;
+    obj[0]=5; -&gt; obj.operator[](0)=5;
+    obj[1]=obj[0]*3;
+    obj[11]=6;//erreur à l'exécution
+</code></pre><h2 id="Chapitre-10-Constructeur-de-copie-">Chapitre 10 Constructeur de copie :</h2><pre><code>Exemple 
+    class A{
+        public:
+            A(int){
+            
+            }
+            A(const A &amp;b){
+            
+            }
+    }
+    
+    
+    void f(A b){}
+    int main{
+        A c{3};
+        f(3);
+        f(c);//ok appel à A(const A&amp;B) pour le paramètre A b
+    
+    }
+    
+Si A est un identifiant ok classe pour expliciter la manière  de construire.Un nouvel objet A à partir d'une expression de type A. 
+</code></pre><p>avec<br>
+soit A (A &amp; C){…}<br>
+soit A(const A &amp;C){…}</p><p>Remarque :par défaut un constructeur de copie est implicitant écrit par le compilateur.</p></div>
